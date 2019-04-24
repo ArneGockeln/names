@@ -1,0 +1,165 @@
+#!/usr/bin/env python
+# Written by Arne Gockeln, https://arnegockeln.com
+import getopt, sys
+
+# globals
+filterx = ""
+filtera = ""
+filterb = ""
+filterappend = True
+
+def readlist(file):
+	f = open(file, "r")
+	if f.mode == "r":
+		fl = f.readlines()
+		fl = [line.rstrip('\n') for line in fl]
+		f.close()
+		return fl
+	return []
+
+def isfiltered(val, filterval):
+	if len(filterval) > 0 and val != filterval:
+		return True
+	return False
+
+def combine(lista,listb,counter,result):
+	global filterappend, filtera, filterb
+	for a in lista:
+		if isfiltered(a, filtera):
+			continue
+
+		for b in listb:
+			if isfiltered(b, filterb):
+				continue
+
+			# if a != b:
+			result.append(a + ("" if filterappend else " ") + b)
+			counter += 1
+
+def printusage():
+	print "Combines strings from dictionary a and dictionary b in 4 ways: a+b,b+a,a+a,b+b."
+	print
+	print "Usage:"
+	print "  -a,--lista ...\tPath to dictionary a"
+	print "  -b,--listb ...\tPath to dictionary b"
+	print "  -l,--lists ...\tCombinations aa,bb,ab,ba"
+	print "  -s,--start ...\tList only words starting with string"
+	print "  -e,--end ...\t\tList only words ending with string"
+	print "  -c,--contains ...\tString to filter in result word"
+	print "  -m,--maxlen ...\tMax length of words, default 255"
+	print "  -n,--maxcount ...\tMax number of results"
+	print "  -h,--help\t\tPrint this message"
+	print "  --noappend\t\tAdd space between a and b word"
+
+def main():
+
+	fullCmdArguments = sys.argv
+	argumentList = fullCmdArguments[1:]
+	unixOptions = "a:b:l:s:e:c:m:n:h"
+	gnuOptions = ["lista=", "listb=", "start=", "end=", "noappend", "lists=", "maxlen=", "maxcount=", "contains=", "help"]
+
+	try:
+		arguments, values = getopt.getopt(argumentList, unixOptions, gnuOptions)
+	except getopt.error as err:
+		print(str(err))
+		sys.exit(2)
+
+	if not arguments:
+		printusage()
+		return
+
+	global filtera, filterb, filterx, filterappend
+	lists   = "ab,ba,aa,bb"
+	lista = ""
+	listb = ""
+	maxlen = 255
+	maxcount = -1
+
+	for currentArgument, currentValue in arguments:
+		if currentArgument in ("-s", "--start"):
+			filtera = currentValue
+		elif currentArgument in ("-e", "--end"):
+			filterb = currentValue
+		elif currentArgument in ("-c", "--contains"):
+			filterx = currentValue
+		elif currentArgument in ("-l", "--lists"):
+			lists = currentValue.split(",")
+		elif currentArgument in ("-a", "--lista"):
+			lista = currentValue
+		elif currentArgument in ("-b", "--listb"):
+			listb = currentValue
+		elif currentArgument in ("-m", "--maxlen"):
+			maxlen = int(currentValue)
+		elif currentArgument in ("-n", "--maxcount"):
+			maxcount = int(currentValue)
+		elif currentArgument in ("-h", "--help"):
+			printusage()
+			sys.exit(0)
+		elif currentArgument in ("--noappend"):
+			filterappend = False
+
+	if len(lista) == 0 or len(listb) == 0:
+		print("Error: No file for -a,--lista or -b,--listb found")
+		printusage()
+		return
+
+	lista = readlist(lista)
+	listb = readlist(listb)
+
+	abcombis = 0
+	bacombis = 0
+	aacombis = 0
+	bbcombis = 0
+
+	# make
+	names = []
+	if "ab" in lists:
+		combine(lista,listb,abcombis,names)
+
+	if "aa" in lists:
+		combine(lista,lista,aacombis,names)
+
+	if "bb" in lists:
+		combine(listb,listb,bbcombis,names)
+
+	if "ba" in lists:
+		combine(listb,lista,bacombis,names)
+
+	# apply filters
+	combinations = 0
+
+	if not filterappend and maxlen < 255:
+		maxlen += 1
+
+	print("-----------------------------------------")
+	for n in names:
+		if len(filterx) > 0 and filterx not in n:
+			continue
+		if len(n) > maxlen:
+			continue
+
+		print(str(n))
+		combinations += 1
+
+		if maxcount == combinations:
+			break
+
+	if combinations == 0:
+		print "No combination found."
+
+	print("-----------------------------------------")
+	if len(filtera) > 0:
+		print("Filter A: " + filtera)
+	if len(filterb) > 0:
+		print("Filter B: " + filterb)
+	if len(filterx) > 0:
+		print("Contains: " + filterx)
+	print("Max Length: " + str(maxlen - 1 if not filterappend and maxlen < 255 else maxlen))
+	if maxcount > -1:
+		print("Max Count: " + str(maxcount))
+	print("Append Words: " + ("False" if not filterappend else "True") )
+	print("Lists: " + str(lists))
+	print("Combinations: " + str(combinations))
+
+if __name__ == "__main__":
+	main()
