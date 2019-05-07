@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # Written by Arne Gockeln, https://arnegockeln.com
-import getopt, sys
+import getopt, sys, os, re
 
 # globals
 filterx = ""
@@ -9,13 +9,19 @@ filterb = ""
 filterappend = True
 
 def readlist(file):
-	f = open(file, "r")
-	if f.mode == "r":
-		fl = f.readlines()
-		fl = [line.rstrip('\n') for line in fl]
-		f.close()
-		return fl
-	return []
+	if os.path.isfile(file):
+		f = open(file, "r")
+		if f.mode == "r":
+			fl = f.readlines()
+			fl = [line.rstrip('\n') for line in fl]
+			f.close()
+			return fl
+	elif re.search('[\.\/]', file):
+		# check if file contains path characters
+		return []
+
+	# return file as word
+	return [file]
 
 def isfiltered(val, filterval):
 	if len(filterval) > 0 and val != filterval:
@@ -40,8 +46,8 @@ def printusage():
 	print "Combines strings from dictionary a and dictionary b in 4 ways: a+b,b+a,a+a,b+b."
 	print
 	print "Usage:"
-	print "  -a,--lista ...\tPath to dictionary a"
-	print "  -b,--listb ...\tPath to dictionary b"
+	print "  -a,--lista ...\tPath to dictionary a, or single word"
+	print "  -b,--listb ...\tPath to dictionary b, or single word"
 	print "  -l,--lists ...\tCombinations aa,bb,ab,ba"
 	print "  -s,--start ...\tList only words starting with string"
 	print "  -e,--end ...\t\tList only words ending with string"
