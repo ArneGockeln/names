@@ -1,0 +1,13 @@
+.de
+.dev
+.io
+.ag
+.agency
+.capital
+.digital
+.global
+.investments
+.management
+.space
+.ventures
+.vision

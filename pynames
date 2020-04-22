@@ -43,19 +43,19 @@ def combine(lista,listb,counter,result):
 			counter += 1
 
 def printusage():
-	print "Combines strings from dictionary a and dictionary b in 4 ways: a+b,b+a,a+a,b+b."
+	print ("Combines strings from dictionary a and dictionary b in 4 ways: a+b,b+a,a+a,b+b.")
 	print
-	print "Usage:"
-	print "  -a,--lista ...\tPath to dictionary a, or single word"
-	print "  -b,--listb ...\tPath to dictionary b, or single word"
-	print "  -l,--lists ...\tCombinations aa,bb,ab,ba"
-	print "  -s,--start ...\tList only words starting with string"
-	print "  -e,--end ...\t\tList only words ending with string"
-	print "  -c,--contains ...\tString to filter in result word"
-	print "  -m,--maxlen ...\tMax length of words, default 255"
-	print "  -n,--maxcount ...\tMax number of results"
-	print "  -h,--help\t\tPrint this message"
-	print "  --noappend\t\tAdd space between a and b word"
+	print ("Usage:")
+	print ("  -a,--lista ...\tPath to dictionary a, or single word")
+	print ("  -b,--listb ...\tPath to dictionary b, or single word")
+	print ("  -l,--lists ...\tCombinations aa,bb,ab,ba")
+	print ("  -s,--start ...\tList only words starting with string")
+	print ("  -e,--end ...\t\tList only words ending with string")
+	print ("  -c,--contains ...\tString to filter in result word")
+	print ("  -m,--maxlen ...\tMax length of words, default 255")
+	print ("  -n,--maxcount ...\tMax number of results")
+	print ("  -h,--help\t\tPrint this message")
+	print ("  --noappend\t\tAdd space between a and b word")
 
 def main():
 
@@ -151,7 +151,7 @@ def main():
 			break
 
 	if combinations == 0:
-		print "No combination found."
+		print ("No combination found.")
 
 	print("-----------------------------------------")
 	if len(filtera) > 0:
